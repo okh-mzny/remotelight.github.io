@@ -44,8 +44,9 @@ async function addCIBuilds() {
                 jobId.innerText = "#" + job.id;
                 jobId.href = job.url;
 
+                const date = new Date(job.commitDate);
                 const jobDate = jclone.getElementById("build_job-date");
-                jobDate.innerText = job.commitDate; // TODO: format dat
+                jobDate.innerText = date.toLocaleString();
 
                 const jobMessage = jclone.getElementById("build_job-message-wrapper");
                 jobMessage.setAttribute("aria-label", job.commitMessage);
