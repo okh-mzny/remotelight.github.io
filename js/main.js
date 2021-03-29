@@ -3,11 +3,15 @@ async function addCIBuilds() {
     var buildsSection = document.getElementById("beta-builds-list");
 
     if('content' in document.createElement('template')) {
+        showLoading();
+
         // get template elements
         const templateRoot = document.getElementById("build-template");
         const templateJob = document.getElementById("build-job-template");
 
         const artifacts = await getArtifacts();
+        // hide loading screen
+        clearBlankslate();
 
         for(let i = 0; i < artifacts.length; i++) {
             const arti = artifacts[i];
@@ -71,13 +75,37 @@ async function addCIBuilds() {
         }
         
     } else {
-        var blankslate = document.createElement("div");
-        blankslate.classList.add("blankslate");
+        clearBlankslate();
         var title = document.createElement("h3");
         title.innerText = "Your browser is not supported";
         title.classList.add("mb-1");
-        blankslate.appendChild(title);
-        buildsSection.appendChild(blankslate);
+        showBlankslate(title);
+    }
+}
+
+function showLoading() {
+    clearBlankslate();
+    var title = document.createElement("h3");
+    title.innerHTML = "<span>Loading</span><span class='AnimatedEllipsis'></span>";
+    title.classList.add("mb-1");
+    showBlankslate(title);
+}
+
+function showBlankslate(content) {
+    var blankslate = document.createElement("div");
+    blankslate.id = "builds-blankslate";
+    blankslate.classList.add("blankslate");
+    blankslate.appendChild(content);
+
+    var buildsSection = document.getElementById("beta-builds-list");
+    buildsSection.appendChild(blankslate);
+}
+
+function clearBlankslate() {
+    var blankslate = document.getElementById("builds-blankslate");
+    if(blankslate) {
+        var buildsSection = document.getElementById("beta-builds-list");
+        buildsSection.removeChild(blankslate);
     }
 }
 
