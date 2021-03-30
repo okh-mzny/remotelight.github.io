@@ -1,15 +1,23 @@
+var currentVisiblePipelines = 0;
+/** Prevents a new call of addCIBuilds() while a request is already being processed */
+let pipelineLoadingLock = false;
 
 async function addCIBuilds() {
     var buildsSection = document.getElementById("beta-builds-list");
 
     if('content' in document.createElement('template')) {
+        let allowRequest = pipelineLoadingLock == false && currentVisiblePipelines < maxPipelines;
+        if(allowRequest == false) return;
+
+        pipelineLoadingLock = true;
         showLoading();
 
         // get template elements
         const templateRoot = document.getElementById("build-template");
         const templateJob = document.getElementById("build-job-template");
 
-        const artifacts = await getArtifacts();
+        const artifacts = await getArtifacts(currentVisiblePipelines);
+        currentVisiblePipelines = currentVisiblePipelines + numberOfPipelines;
         // hide loading screen
         clearBlankslate();
 
@@ -27,7 +35,7 @@ async function addCIBuilds() {
 
             let latest = false;
             // show latest label if this is the first item and mark as latest
-            if(i == 0) {
+            if(arti.index == 0) {
                 latest = true;
                 const latestLabel = clone.getElementById("build-latest");
                 latestLabel.style.display = "unset";
@@ -74,6 +82,8 @@ async function addCIBuilds() {
             // add to builds list
             buildsSection.appendChild(clone);
         }
+
+        pipelineLoadingLock = false;
         
     } else {
         clearBlankslate();
@@ -110,4 +120,22 @@ function clearBlankslate() {
     }
 }
 
-addCIBuilds();
+function loadMorePipelines() {
+    const button = document.getElementById("builds-load-more");
+    if(currentVisiblePipelines + numberOfPipelines >= maxPipelines) {
+        button.disabled = true;
+    }
+    setShowMoreButtonVisible(false)
+    addCIBuilds().then(() => setShowMoreButtonVisible(true));
+}
+
+function setShowMoreButtonVisible(visible) {
+    const button = document.getElementById("builds-load-more");
+    if(visible) {
+        button.style.visibility = "visible";
+    } else {
+        button.style.visibility = "hidden";
+    }
+}
+
+addCIBuilds().then(() => setShowMoreButtonVisible(true));

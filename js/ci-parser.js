@@ -12,6 +12,10 @@ const browseEndURL = "/artifacts/browse/remotelight-client/target";
  * By default show the latest 5 pipelines.
  */
 const numberOfPipelines = 5;
+/**
+ * Max pipelines that are allowed to request
+ */
+const maxPipelines = 20;
 
 /**
  * Request pipelines that were successful.
@@ -61,14 +65,17 @@ async function getJobsOfPipeline(pipelineID) {
 /**
  * Get an array of artifact objects containing
  * pipelines and its jobs with artifacts.
+ * @param {Number} offsetPipeline   index of the first pipeline
+ *                                  that should be returned
  */
-async function getArtifacts() {
+async function getArtifacts(offsetPipeline) {
     const pipelines = await getPipelines();
     console.log("received", pipelines.length, "pipelines")
     /* 
         [{
             id: <pipeline ID>,
             url: <pipeline url>,
+            index: <pipeline index>,
             jobs: [
                 id: <job ID>,
                 url: <job url>,
@@ -84,17 +91,27 @@ async function getArtifacts() {
     */
     var artifacts = [];
 
-    // limit the number of pipelines
-    let maxPipelines = pipelines.length;
-    if(maxPipelines > numberOfPipelines) {
-        maxPipelines = numberOfPipelines;
+    let startPipeline = 0;
+    if(!offsetPipeline) {
+        startPipeline = 0;
+    } else if(offsetPipeline >= maxPipelines) {
+        startPipeline = maxPipelines - 1;
+    } else {
+        startPipeline = offsetPipeline;
     }
 
-    for(let i = 0; i < maxPipelines; i++) {
+    // iterate up to this index (exclusive)
+    let endPipeline = startPipeline + numberOfPipelines;
+    if(endPipeline > pipelines.length) {
+        endPipeline = pipelines.length;
+    }
+
+    for(let i = startPipeline; i < endPipeline; i++) {
         // add pipeline data to artifact object
         var artifactObj = {
             id: pipelines[i].id,
             url: pipelines[i].url,
+            index: i,
             jobs: []
         }
 
