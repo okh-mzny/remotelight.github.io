@@ -7,11 +7,32 @@
     <title>RemoteLight</title>
     <link href="/css/style.css" rel="stylesheet" />
     <link href="https://unpkg.com/@primer/css@^16.0.0/dist/primer.css" rel="stylesheet" />
+    <script defer src="/js/theme.js"></script>
     <script defer src="/js/ci-parser.js"></script>
     <script defer src="/js/main.js"></script>
 </head>
 <body>
     <main class="p-2 p-md-4">
+        <div class="d-flex flex-row-reverse">
+            <details class="details-reset details-overlay">
+                <summary class="btn btn-sm" aria-haspopup="true">
+                    <!-- <%= octicon "moon" %> -->
+                    <svg class="octicon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z"></path></svg>
+                    <span class="hide-sm">Theme</span>
+                </summary>
+                <div class="SelectMenu">
+                  <div class="SelectMenu-modal">
+                    <div class="SelectMenu-list">
+                      <button class="SelectMenu-item" role="menuitem" onclick="toggleTheme('auto');">Auto</button>
+                      <button class="SelectMenu-item" role="menuitem" onclick="toggleTheme('light');">Light</button>
+                      <button class="SelectMenu-item" role="menuitem" onclick="toggleTheme('dark', 'dark');">Dark</button>
+                      <button class="SelectMenu-item" role="menuitem" onclick="toggleTheme('dark', 'dark_dimmed');">Dark Dimmed</button>
+                    </div>
+                  </div>
+                </div>
+            </details>
+        </div>
+
         <div class="Subhead">
             <div class="Subhead-heading h1">RemoteLight - LED Control Software</div>
             <div class="Subhead-description">This site is still under construction. 🚧</div>
